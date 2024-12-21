@@ -5,6 +5,7 @@ import com.project.shopapp.DTO.PaymentStatusDTO;
 import com.project.shopapp.customexceptions.DataNotFoundException;
 import com.project.shopapp.customexceptions.InvalidParamException;
 import com.project.shopapp.models.Order;
+import com.project.shopapp.responses.OrderResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
-    Page<Order> getOrdersByPage(int page, int size);
+    Page<OrderResponse> getOrdersByPage(int page, int size);
     Order createOrder(OrderDTO orderDTO) throws DataNotFoundException;
     Order getOrder(Long id);
     void deleteOrder(Long id);

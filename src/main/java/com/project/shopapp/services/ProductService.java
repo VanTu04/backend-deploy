@@ -11,7 +11,7 @@ public interface ProductService {
     Product getProductById(long id) throws Exception;
     List<ProductsResponse> getAllProducts();
     Product updateProduct(long id, ProductDTO productDTO) throws Exception;
-    void deleteProduct(long id);
+    void deleteProduct(long id) throws Exception;
     boolean existsByName(String name);
     void saveThumbnail(Product product);
 

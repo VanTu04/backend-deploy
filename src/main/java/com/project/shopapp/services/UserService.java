@@ -8,5 +8,7 @@ public interface UserService {
     User createUser(UserDTO userDTO) throws Exception;
     AuthResponse login(String phoneNumber, String password) throws Exception;
     User findUserById(Long id) throws Exception;
+
+    String resetPassword(String phoneNumber, String password);
 }
 

@@ -3,11 +3,14 @@ package com.project.shopapp.services.impl;
 import com.project.shopapp.DTO.ProductDTO;
 import com.project.shopapp.customexceptions.DataNotFoundException;
 import com.project.shopapp.models.Category;
+import com.project.shopapp.models.OrderItem;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.repositories.CategoryRepository;
+import com.project.shopapp.repositories.OrderItemRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.responses.ProductsResponse;
 import com.project.shopapp.services.ProductService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,7 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderItemRepository orderItemRepository;
     @Override
     public Product createProduct(ProductDTO productDTO) throws DataNotFoundException {
         Category existingCategory = categoryRepository
@@ -89,9 +93,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteProduct(long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        optionalProduct.ifPresent(productRepository::delete);
+        Product p = productRepository.findById(id).get();
+        List<OrderItem> orderItems = orderItemRepository.findByFood(p);
+        if (!orderItems.isEmpty()) {
+            orderItemRepository.deleteAll(orderItems); // Xóa tất cả order items liên quan
+        }
+
+        // Xóa sản phẩm
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Cannot find product with id = " + id));
+
+        productRepository.delete(product);
     }
 
 

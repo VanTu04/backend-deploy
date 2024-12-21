@@ -2,14 +2,28 @@ server:
   port:
    8080
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tu942004@gmail.com
+    password: wtag eqcy zoqg elnf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connection timeout: 5000
+          timeout: 5000
+          write timeout: 5000
   datasource:
 #    url: jdbc:mysql://localhost:3306/restaurant?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh
 #    username: root
 #    password: 0978477143
-    url: jdbc:mysql://${DATABASE_HOST:localhost}:${DATABASE_PORT:3306}/${DATABASE_NAME:restaurant}
-    username: ${DATABASE_NAME:root}
-    password: ${DATABASE_PASSWORD:0978477143}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://103.200.23.189:3306/thieubin_restaurant
+    username: thieubin_user
+    password: User@123###
   jpa:
     show-sql: true
     hibernate:
@@ -33,7 +47,3 @@ logging:
     org:
       springframework:
         security: DEBUG
-
-# application.yml
-debug: true
-

@@ -37,7 +37,7 @@ public class WebSecurityConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE") // Allowed HTTP methods
                         .allowedHeaders("*") // Allowed request headers
                         .allowCredentials(false)
@@ -55,6 +55,9 @@ public class WebSecurityConfig {
                     requests
                             .requestMatchers(
                                     String.format("%s/users/register", apiPrefix),
+                                    String.format("%s/users/forgot-password", apiPrefix),
+                                    String.format("%s/users/verify-password", apiPrefix),
+                                    String.format("%s/users/reset-password", apiPrefix),
                                     String.format("%s/users/login", apiPrefix),
                                     String.format("%s/categories/**", apiPrefix),
                                     String.format("%s/products/**", apiPrefix),

@@ -4,6 +4,7 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.DTO.OrderDTO;
 import com.project.shopapp.DTO.PaymentStatusDTO;
 import com.project.shopapp.models.Order;
+import com.project.shopapp.responses.OrderResponse;
 import com.project.shopapp.services.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,10 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("")
-    public ResponseEntity<Page<Order>> getOrders(
+    public ResponseEntity<Page<OrderResponse>> getOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<Order> orders = orderService.getOrdersByPage(page, size);
+        Page<OrderResponse> orders = orderService.getOrdersByPage(page, size);
         return ResponseEntity.ok(orders);
     }
 

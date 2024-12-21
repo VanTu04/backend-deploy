@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(userDTO.getPhoneNumber())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .address(userDTO.getAddress())
+                .email(userDTO.getEmail())
                 .active(true)
                 .build();
 
@@ -89,5 +90,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserById(Long id) throws Exception {
         return userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User not found"));
+    }
+
+    @Override
+    public String resetPassword(String phoneNumber, String password) {
+        Optional<User> existingUser = userRepository.findByPhoneNumber(phoneNumber);
+        if(existingUser.isEmpty()) {
+            throw new DataNotFoundException("User not found");
+        }
+        User user = existingUser.get();
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        return "Successfully updated password";
     }
 }

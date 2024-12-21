@@ -16,6 +16,8 @@ import com.project.shopapp.repositories.OrderItemRepository;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.repositories.TableReservationRepository;
+import com.project.shopapp.responses.OrderItemsResponse;
+import com.project.shopapp.responses.OrderResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,6 +36,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,9 +81,26 @@ public class OrderServiceImpl implements com.project.shopapp.services.OrderServi
     }
 
     @Override
-    public Page<Order> getOrdersByPage(int page, int size) {
+    public Page<OrderResponse> getOrdersByPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "orderTime"));
-        return orderRepository.findAll(pageable);
+        Page<Order> orderList = orderRepository.findAll(pageable);
+
+        Page<OrderResponse> orderResponse = orderList.map(order -> new OrderResponse(
+                order.getId(),
+                order.getOrderTime(),
+                order.getPaymentStatus(),
+                order.getTotalPrice(),
+                order.getReservation() != null ? order.getReservation().getCustomerName() : null,
+                order.getReservation() != null ? order.getReservation().getReservationCode() : null,
+                order.getOrderItems() != null ? order.getOrderItems().stream()
+                        .map(item -> new OrderItemsResponse(
+                                item.getFood().getName(), // Tên món ăn
+                                item.getFood().getPrice().toString(), // Giá món ăn, giả sử item.getFood().getPrice() trả về BigDecimal
+                                String.valueOf(item.getQuantity()) // Số lượng món ăn
+                        ))
+                        .collect(Collectors.toList()) : new ArrayList<>()
+        ));
+        return orderResponse;
     }
 
     @Override
@@ -91,6 +111,12 @@ public class OrderServiceImpl implements com.project.shopapp.services.OrderServi
 
     @Override
     public void deleteOrder(Long id) {
+        Order order = orderRepository.findById(id).orElse(null);
+        if(order != null){
+            TableReservation tableReservation = tableReservationRepository.findById(order.getReservation().getId()).get();
+            tableReservation.setStatus(RESERVATION_STATUS.CONFIRMED);
+            tableReservationRepository.save(tableReservation);
+        }
         orderRepository.findById(id).ifPresent(orderRepository::delete);
     }
 

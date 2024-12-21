@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "order_details")
@@ -29,4 +30,6 @@ public class OrderItem {
     @JoinColumn(name = "food_id", nullable = false)
     private Product food;
 
+//    @OneToMany(mappedBy = "food", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private List<OrderItem> orderItems;
 }
